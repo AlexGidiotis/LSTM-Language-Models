@@ -15,8 +15,8 @@ class Corpus(object):
 		val_file,
 		data_sample,
 		batch_size=64,
-		max_len=50,
-		skip=4):
+		max_len=25,
+		skip=2):
 		"""
 		"""
 

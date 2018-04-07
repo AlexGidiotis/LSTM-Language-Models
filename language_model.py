@@ -67,9 +67,9 @@ def build_model(max_len,
 
 if __name__ == '__main__':
 
-	starting_text = 'Wiki corpus language model'
+	starting_text = 'WikiCorpus language model'
 	epochs = 2000
-	max_len = 50
+	max_len = 25
 	batch_size = 512
 	data_sample = 0.1
 	STAMP = 'language_model'
