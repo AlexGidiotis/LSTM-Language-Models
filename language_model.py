@@ -2,6 +2,7 @@ import numpy as np
 import random
 import time
 import sys
+import json
 
 from keras.layers import Dense, Input, LSTM, Dropout, Activation
 from keras.models import Model
@@ -129,6 +130,11 @@ if __name__ == '__main__':
 
 	data_set = Corpus(train_data,val_data,max_len=max_len,batch_size=batch_size,data_sample=data_sample)
 
+	with open('char2id.json', 'w') as fp:
+		json.dump(data_set.char2id, fp)
+	with open('id2char.json', 'w') as fp:
+		json.dump(data_set.id2char, fp)
+	
 	model = build_model(max_len,data_set.vocab_size)
 
 	print(STAMP)
