@@ -2,9 +2,11 @@
 import time
 import re
 from random import shuffle
+import string
 
 import numpy as np
 
+printable = set(string.printable)
 
 class Corpus(object):
 	"""
@@ -35,6 +37,7 @@ class Corpus(object):
 		"""
 		with open(self.train_file) as f:
 			self.train_data = f.read()
+			self.train_data = filter(lambda x: x in printable, self.train_data)
 			self.train_data = re.split('(?<=</page>)\n+',self.train_data)
 			shuffle(self.train_data)
 			self.train_data = self.train_data[:int(len(self.train_data) * self.data_sample)]
@@ -42,6 +45,7 @@ class Corpus(object):
 
 		with open(self.val_file) as f:
 			self.val_data = f.read()
+			self.val_data = filter(lambda x: x in printable, self.val_data)
 			self.val_data = re.split('(?<=</page>)\n+',self.val_data)
 			shuffle(self.val_data)
 			self.val_data = self.val_data[:int(len(self.val_data) * self.data_sample)]
@@ -83,6 +87,7 @@ class Corpus(object):
 			for char in chars:
 				if char not in char_vocab:
 					char_vocab.append(char)
+
 
 		char_vocab = sorted(char_vocab)
 		self.vocab_size = len(char_vocab)
