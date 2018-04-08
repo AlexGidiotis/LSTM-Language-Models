@@ -10,6 +10,13 @@ from utils import sample
 
 def load_model(STAMP):
 	"""
+	Load a trained model from disk
+
+	Args:
+		STAMP: The name of the model.
+
+	Returns:
+		model: The loaded model and weights.
 	"""
 
 	json_file = open(STAMP+'.json', 'r')
@@ -35,6 +42,14 @@ def text_generator(model,
 	Generate 1000 characters with the model.
 	The starting_text is used as the first input to the model 
 	and then each prediction is fed back to continue predicting.
+
+	Args:
+		model: A keras model used for the predictions.
+		max_len: The length of the input sequence.
+		vocab_size: The number of characters in the vocabulary.
+		char2id: The character to id index.
+		id2char: The id to character index.
+		temperature: The temperature used for sampling.
 	"""		
 
 	starting_text = 'WikiCorpus language model'
