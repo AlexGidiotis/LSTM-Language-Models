@@ -3,6 +3,8 @@
 import re
 from random import shuffle
 
+import numpy as np
+
 
 data_file = 'data/enwik8'
 
@@ -32,6 +34,30 @@ def split_data(data_file,
 			of.write('\n')
 
 	return 
+
+
+def sample(prediction,
+	temperature):
+	"""
+	Sample the model predictions with a given temperature.
+
+	Args:
+		prediction: The predictions outputed by the model.
+		temperature: The temperature used for sampling.
+			High temperature(close to 1.) leads to high confidence.
+			Low temperature leads to higher diversity. 
+
+	Returns:
+		probabilities: The output probabilities sampled.
+	"""
+
+	prediction = np.asarray(prediction).astype('float64')
+	prediction = np.log(prediction) / temperature
+	exp_prediction = np.exp(prediction)
+	prediction = exp_prediction / np.sum(exp_prediction)
+	probabilities = np.random.multinomial(1, prediction, 1)
+	
+	return probabilities
 
 
 if __name__ == '__main__':

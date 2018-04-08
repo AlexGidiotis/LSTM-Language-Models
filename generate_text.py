@@ -5,11 +5,13 @@ import numpy as np
 
 from keras.models import model_from_json
 
+from utils import sample
+
 
 def load_model(STAMP):
 	"""
 	"""
-	
+
 	json_file = open(STAMP+'.json', 'r')
 	loaded_model_json = json_file.read()
 	json_file.close()
@@ -23,20 +25,6 @@ def load_model(STAMP):
 	return model
 
 
-def sample(prediction,
-	temperature):
-	"""
-	"""
-
-	prediction = np.asarray(prediction).astype('float64')
-	prediction = np.log(prediction) / temperature
-	exp_prediction = np.exp(prediction)
-	prediction = exp_prediction / np.sum(exp_prediction)
-	probabilities = np.random.multinomial(1, prediction, 1)
-	
-	return probabilities
-
-
 def text_generator(model,
 	max_len,
 	vocab_size,
@@ -44,6 +32,9 @@ def text_generator(model,
 	id2char,
 	temperature):
 	"""
+	Generate 1000 characters with the model.
+	The starting_text is used as the first input to the model 
+	and then each prediction is fed back to continue predicting.
 	"""		
 
 	starting_text = 'WikiCorpus language model'

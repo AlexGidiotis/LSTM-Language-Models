@@ -10,8 +10,9 @@ from keras.layers.normalization import BatchNormalization
 from keras.optimizers import Adam
 import keras.backend as K
 from keras import callbacks
-from data_gen import Corpus
 
+from data_gen import Corpus
+from utils import sample
 
 
 train_data = 'data/train_set.txt'
@@ -27,6 +28,8 @@ class GenerateText(callbacks.Callback):
 	def on_epoch_end(self, epoch, logs={}):
 		"""
 		Every 20 epochs generate 1000 characters with the model.
+		The starting_text is used as the first input to the model 
+		and then each prediction is fed back to continue predicting.
 		"""		
 
 		starting_text = 'WikiCorpus language model'
@@ -76,30 +79,6 @@ class Checkpointer(callbacks.Callback):
 
 		return
  
-
-def sample(prediction,
-	temperature):
-	"""
-	Sample the model predictions with a given temperature.
-
-	Args:
-		prediction: The predictions outputed by the model.
-		temperature: The temperature used for sampling.
-			High temperature(close to 1.) leads to high confidence.
-			Low temperature leads to higher diversity. 
-
-	Returns:
-		probabilities: The output probabilities sampled.
-	"""
-
-	prediction = np.asarray(prediction).astype('float64')
-	prediction = np.log(prediction) / temperature
-	exp_prediction = np.exp(prediction)
-	prediction = exp_prediction / np.sum(exp_prediction)
-	probabilities = np.random.multinomial(1, prediction, 1)
-	
-	return probabilities
-
 
 def build_model(max_len,
 	vocab_size):
