@@ -32,4 +32,4 @@ Once that data are ready you can start training your own language model. In my e
 
 ### Generation
 
-Once the model has converged, you can use it to generate new text samples. The generation requires an initial text feed to start the sampling chain and then the generation can be controlled using the temperature parameter.
+Once the model has converged, you can use it to generate new text samples. The generation requires an initial text feed to start the sampling chain and then the generation can be controlled using the temperature parameter. You can use `generate_text.py` in order to generate new text using a trained model.

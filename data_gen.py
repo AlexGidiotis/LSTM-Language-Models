@@ -123,9 +123,9 @@ class Corpus(object):
 
 					for i,section in enumerate(sections):
 						for j,char in enumerate(section):
-							train_batch[i,j,self.char2id[char]] = 1.
+							train_batch[i,j,self.char2id[char]] = 1
 
-						train_targets[i,self.char2id[next_chars[i]]] = 1.
+						train_targets[i,self.char2id[next_chars[i]]] = 1
 
 					yield train_batch, train_targets
 
@@ -157,11 +157,11 @@ class Corpus(object):
 					for i,section in enumerate(sections):
 						for j,char in enumerate(section):
 							try:
-								val_batch[i,j,self.char2id[char]] = 1.
+								val_batch[i,j,self.char2id[char]] = 1
 							except:
 								pass
 						try:
-							val_targets[i,self.char2id[next_chars[i]]] = 1.
+							val_targets[i,self.char2id[next_chars[i]]] = 1
 						except:
 							pass
 							

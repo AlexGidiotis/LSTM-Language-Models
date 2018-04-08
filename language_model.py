@@ -7,6 +7,7 @@ import json
 from keras.layers import Dense, Input, LSTM, Dropout, Activation
 from keras.models import Model
 from keras.layers.normalization import BatchNormalization
+from keras.optimizers import Adam
 import keras.backend as K
 from keras import callbacks
 from data_gen import Corpus
@@ -27,27 +28,28 @@ class GenerateText(callbacks.Callback):
 
 		starting_text = 'WikiCorpus language model'
 
-		if epoch % 50 == 0:
+		if epoch % 20 == 0:
 			test_generated = ''
 			test_generated += starting_text
 			sys.stdout.write(test_generated)
 
-			# Generate 1000 characters.
 			for i in range(1000):
-				# First vectorize the starting text.
-				x = np.zeros((1, max_len, data_set.vocab_size))
 
+				x = np.zeros((1, max_len, data_set.vocab_size))
 				for t, char in enumerate(starting_text):
 					x[0, t, data_set.char2id[char]] = 1.
 
-				# Predict using the previously generated text as input.
+
 				preds = model.predict(x, verbose=0)[0]
-				# Sample and decode the prediction.
-				next_char_one_hot = sample(preds,0.6)
+
+
+				next_char_one_hot = sample(preds,temperature=0.9)
 				next_char = data_set.id2char[np.argmax(next_char_one_hot)]
-				# Append prediction to the generated text.
+
+
 				test_generated += next_char
-				# Write the output one char at a time.
+
+
 				sys.stdout.write(next_char)
 				sys.stdout.flush()
 
@@ -91,15 +93,15 @@ def build_model(max_len,
 
 	input_layer = Input(shape=(max_len,vocab_size))
 
-	lstm1 = LSTM(100,
+	lstm1 = LSTM(150,
 		activation='tanh', 
 		recurrent_activation='hard_sigmoid', 
 		recurrent_dropout=0.0,
-		dropout=0.2, 
+		dropout=0.4, 
 		return_sequences=True)(input_layer)
 	lstm1 = BatchNormalization()(lstm1)
 
-	lstm2 = LSTM(100, 
+	lstm2 = LSTM(150, 
 		activation='tanh', 
 		recurrent_activation='hard_sigmoid', 
 		recurrent_dropout=0.0,
@@ -113,8 +115,9 @@ def build_model(max_len,
 
 	model = Model(inputs=input_layer, outputs=predictions)
 
+	adam = Adam(lr=0.01)
 	model.compile(loss='categorical_crossentropy',
-			optimizer='rmsprop')
+			optimizer='adam')
 	model.summary()
 
 	return model
