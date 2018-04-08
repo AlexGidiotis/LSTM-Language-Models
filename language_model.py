@@ -20,10 +20,13 @@ val_data = 'data/val_set.txt'
 
 class GenerateText(callbacks.Callback):
 	"""
+	Uses the model to generate new text in order to visualize the
+	learning procedure.
 	"""
 
 	def on_epoch_end(self, epoch, logs={}):
 		"""
+		Every 20 epochs generate 1000 characters with the model.
 		"""		
 
 		starting_text = 'WikiCorpus language model'
@@ -60,10 +63,12 @@ class GenerateText(callbacks.Callback):
 
 class Checkpointer(callbacks.Callback):
 	"""
+	Saves learned weights during training.
 	"""
 
 	def on_epoch_end(self, epoch, logs={}):
 		"""
+		Every 10 epochs we save the learned weights.
 		"""		
 
 		if epoch % 10 == 0:
@@ -75,6 +80,16 @@ class Checkpointer(callbacks.Callback):
 def sample(prediction,
 	temperature):
 	"""
+	Sample the model predictions with a given temperature.
+
+	Args:
+		prediction: The predictions outputed by the model.
+		temperature: The temperature used for sampling.
+			High temperature(close to 1.) leads to high confidence.
+			Low temperature leads to higher diversity. 
+
+	Returns:
+		probabilities: The output probabilities sampled.
 	"""
 
 	prediction = np.asarray(prediction).astype('float64')
@@ -89,11 +104,19 @@ def sample(prediction,
 def build_model(max_len,
 	vocab_size):
 	"""
+	Builds the lstm language model.
+
+	Args:
+		max_len: The length of the input sequences.
+		vocab_size: The number of characters in the vocabulary.
+
+	Returns:
+		model: A comiled keras model.
 	"""
 
 	input_layer = Input(shape=(max_len,vocab_size))
 
-	lstm1 = LSTM(150,
+	lstm1 = LSTM(300,
 		activation='tanh', 
 		recurrent_activation='hard_sigmoid', 
 		recurrent_dropout=0.0,
@@ -101,7 +124,7 @@ def build_model(max_len,
 		return_sequences=True)(input_layer)
 	lstm1 = BatchNormalization()(lstm1)
 
-	lstm2 = LSTM(150, 
+	lstm2 = LSTM(300, 
 		activation='tanh', 
 		recurrent_activation='hard_sigmoid', 
 		recurrent_dropout=0.0,
@@ -128,7 +151,7 @@ if __name__ == '__main__':
 	epochs = 2000
 	max_len = 25
 	batch_size = 512
-	data_sample = 0.1
+	data_sample = 1.0
 	STAMP = 'language_model'
 
 	data_set = Corpus(train_data,val_data,max_len=max_len,batch_size=batch_size,data_sample=data_sample)

@@ -7,7 +7,9 @@ from keras.models import model_from_json
 
 
 def load_model(STAMP):
-
+	"""
+	"""
+	
 	json_file = open(STAMP+'.json', 'r')
 	loaded_model_json = json_file.read()
 	json_file.close()
@@ -99,4 +101,4 @@ if __name__ == '__main__':
 	model = load_model(STAMP)
 
 
-	text_generator(model,max_len,vocab_size,char2id,id2char,temperature=0.9)
+	text_generator(model,max_len,vocab_size,char2id,id2char,temperature=0.7)

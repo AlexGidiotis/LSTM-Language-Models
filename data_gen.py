@@ -10,6 +10,8 @@ printable = set(string.printable)
 
 class Corpus(object):
 	"""
+	A data generator that takes care of all the data loading and preparation
+	required for training.
 	"""
 
 	def __init__(self,
@@ -20,6 +22,14 @@ class Corpus(object):
 		max_len=25,
 		skip=2):
 		"""
+		Args:
+			train_file: The training data.
+			val_file: The validation data.
+			data_sample: If < 1. then use a sample of the data.
+			batch_size: The size of the mini-batches for training.
+			max_len: The length of the input sequences.
+			skip: How many characters to skip when creating the 
+				training sequences.
 		"""
 
 		self.train_file = train_file
@@ -34,6 +44,9 @@ class Corpus(object):
 
 	def read_data(self):
 		"""
+		Reads the raw data and splits them to wiki pages using </page>\n
+		as the delimiter.
+		Also filters out all then non-printable characters.
 		"""
 		with open(self.train_file) as f:
 			self.train_data = f.read()
@@ -58,6 +71,7 @@ class Corpus(object):
 
 	def find_size(self):
 		"""
+		Estimate the number of training and validation batches for training.
 		"""
 		num_train_batches = 0
 		for item in self.train_data:
@@ -79,6 +93,8 @@ class Corpus(object):
 	def build_vocabulary(self,
 		data):
 		"""
+		Builds the corpus vocabulary of characters.
+		Also creates the char2id and id2char dictionaries.
 		"""
 
 		char_vocab = []
@@ -102,6 +118,15 @@ class Corpus(object):
 
 	def get_train(self):
 		"""
+		Get the next training batch. Splits a wiki page into batches
+		of batch_size and the batches into one-hot encoded 
+		sequence,next_character pairs of max_len length.
+		Once a full pass over the whole training set is comleted, the
+		wiki pages are shuffled before the next pass.
+
+		Yields:
+			train_batch: A batch of encoded sequences.
+			train_targets: The encoded next character for each sequence.
 		"""
 
 		while True:
@@ -134,6 +159,15 @@ class Corpus(object):
 
 	def get_val(self):
 		"""
+		Get the next validation batch. Splits a wiki page into batches
+		of batch_size and the batches into one-hot encoded 
+		sequence,next_character pairs of max_len length.
+		Once a full pass over the whole validation set is comleted, the
+		wiki pages are shuffled before the next pass.
+
+		Yields:
+			train_batch: A batch of encoded sequences.
+			train_targets: The encoded next character for each sequence.
 		"""
 
 		while True:
@@ -173,6 +207,11 @@ class Corpus(object):
 	def shuffle_examples(self,
 		flag):
 		"""
+		Shuffles the wiki pages in the training or validation set.
+		This is normaly done at the end of each epoch.
+
+		Args:
+			flag: train or val that specifies the data set to shuffle.
 		"""
 
 		if flag == 'train':
