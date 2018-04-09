@@ -52,7 +52,7 @@ def text_generator(model,
 		temperature: The temperature used for sampling.
 	"""		
 
-	starting_text = 'WikiCorpus language model'
+	starting_text = 'WikiCorpus has a lot of text'
 
 	test_generated = ''
 	test_generated += starting_text
@@ -68,7 +68,8 @@ def text_generator(model,
 		preds = model.predict(x, verbose=0)[0]
 
 
-		next_char_one_hot = sample(preds,temperature=temperature)
+		next_char_one_hot = sample(preds,
+			temperature=temperature)
 		next_char = id2char[np.argmax(next_char_one_hot)]
 
 
@@ -85,7 +86,7 @@ def text_generator(model,
 
 if __name__ == '__main__':
 
-	max_len = 25
+	max_len = 40
 	STAMP = 'language_model'
 
 	with open('char2id.json', 'r') as fp:
@@ -107,4 +108,9 @@ if __name__ == '__main__':
 	model = load_model(STAMP)
 
 
-	text_generator(model,max_len,vocab_size,char2id,id2char,temperature=0.7)
+	text_generator(model,
+		max_len,
+		vocab_size,
+		char2id,
+		id2char,
+		temperature=0.7)

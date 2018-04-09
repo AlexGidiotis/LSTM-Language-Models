@@ -32,7 +32,7 @@ class GenerateText(callbacks.Callback):
 		and then each prediction is fed back to continue predicting.
 		"""		
 
-		starting_text = 'WikiCorpus language model'
+		starting_text = 'WikiCorpus has a lot of text'
 
 		if epoch % 20 == 0:
 			test_generated = ''
@@ -95,29 +95,30 @@ def build_model(max_len,
 
 	input_layer = Input(shape=(max_len,vocab_size))
 
-	lstm1 = LSTM(300,
+	lstm1 = LSTM(512,
 		activation='tanh', 
 		recurrent_activation='hard_sigmoid', 
 		recurrent_dropout=0.0,
-		dropout=0.4, 
+		dropout=0.5, 
 		return_sequences=True)(input_layer)
 	lstm1 = BatchNormalization()(lstm1)
 
-	lstm2 = LSTM(300, 
+	lstm2 = LSTM(512, 
 		activation='tanh', 
 		recurrent_activation='hard_sigmoid', 
 		recurrent_dropout=0.0,
-		dropout=0.4, 
+		dropout=0.5, 
 		return_sequences=False)(lstm1)
 	lstm2 = BatchNormalization()(lstm2)
 
-	dropout = Dropout(0.4)(lstm2)
+	dropout = Dropout(0.5)(lstm2)
 	predictions = Dense(vocab_size,
 		activation='softmax')(dropout)
 
-	model = Model(inputs=input_layer, outputs=predictions)
+	model = Model(inputs=input_layer,
+		outputs=predictions)
 
-	adam = Adam(lr=0.01)
+	adam = Adam(lr=2e-3)
 	model.compile(loss='categorical_crossentropy',
 			optimizer='adam')
 	model.summary()
@@ -128,12 +129,17 @@ def build_model(max_len,
 if __name__ == '__main__':
 
 	epochs = 2000
-	max_len = 25
+	max_len = 40
 	batch_size = 512
-	data_sample = 1.0
+	data_sample = 0.5
+	skip = 3
 	STAMP = 'language_model'
 
-	data_set = Corpus(train_data,val_data,max_len=max_len,batch_size=batch_size,data_sample=data_sample)
+	data_set = Corpus(train_data,val_data,
+		max_len=max_len,
+		batch_size=batch_size,
+		data_sample=data_sample,
+		skip=skip)
 
 	with open('char2id.json', 'w') as fp:
 		json.dump(data_set.char2id, fp)
